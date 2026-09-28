@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Email Verification</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+radial-gradient(circle at top left,#dbeafe 0%,transparent 30%),
+radial-gradient(circle at bottom right,#dcfce7 0%,transparent 30%),
+linear-gradient(135deg,#f8fafc,#eef2f7);
+padding:20px;
+overflow:hidden;
+}
+
+.bg{
+position:fixed;
+border-radius:50%;
+filter:blur(16px);
+opacity:.45;
+pointer-events:none;
+}
+
+.bg1{width:240px;height:240px;background:#bfdbfe;top:-80px;left:-60px}
+.bg2{width:280px;height:280px;background:#c7d2fe;right:-80px;top:120px}
+.bg3{width:180px;height:180px;background:#bbf7d0;bottom:-30px;right:130px}
+
+.card{
+width:100%;
+max-width:560px;
+background:white;
+padding:42px;
+border-radius:30px;
+box-shadow:0 20px 60px rgba(15,23,42,.12);
+position:relative;
+z-index:2;
+animation:fade .5s ease;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:none}
+}
+
+.logo{
+width:82px;
+height:82px;
+margin:auto;
+border-radius:24px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 12px 30px rgba(37,99,235,.35);
+}
+
+.logo svg{
+width:40px;
+height:40px;
+stroke:white;
+stroke-width:2.5;
+fill:none;
+}
+
+h1{
+margin-top:24px;
+font-size:42px;
+text-align:center;
+font-weight:800;
+color:#0f172a;
+}
+
+.subtitle{
+margin-top:16px;
+text-align:center;
+line-height:1.7;
+font-size:17px;
+color:#64748b;
+}
+
+.section{margin-top:40px}
+
+label{
+display:block;
+margin-bottom:10px;
+font-size:15px;
+font-weight:600;
+color:#334155;
+}
+
+.email-input{
+width:100%;
+height:58px;
+border:1px solid #cbd5e1;
+border-radius:18px;
+padding:0 18px;
+font-size:16px;
+background:#f8fafc;
+outline:none;
+transition:.2s;
+}
+
+.email-input:focus{
+border-color:#2563eb;
+background:white;
+box-shadow:0 0 0 5px rgba(37,99,235,.12);
+}
+
+.otp-wrapper{
+display:flex;
+justify-content:center;
+gap:12px;
+margin:20px 0;
+}
+
+.otp-box{
+width:62px;
+height:78px;
+border:1.5px solid #cbd5e1;
+border-radius:18px;
+background:#f8fafc;
+font-size:30px;
+font-weight:700;
+text-align:center;
+outline:none;
+transition:.2s;
+}
+
+.otp-box:focus{
+border-color:#2563eb;
+background:white;
+box-shadow:0 0 0 5px rgba(37,99,235,.12);
+}
+
+.timer{
+text-align:center;
+font-size:16px;
+font-weight:600;
+color:#64748b;
+}
+
+.btn{
+margin-top:26px;
+width:100%;
+height:58px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+font-size:17px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 12px 28px rgba(37,99,235,.3);
+transition:.2s;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+}
+
+.btn:disabled{
+background:#cbd5e1;
+box-shadow:none;
+cursor:not-allowed;
+transform:none;
+}
+
+.resend{
+display:none;
+margin:18px auto 0;
+background:none;
+border:none;
+color:#2563eb;
+font-weight:600;
+cursor:pointer;
+}
+
+.message{
+display:none;
+margin-top:18px;
+padding:14px;
+border-radius:16px;
+font-weight:600;
+}
+
+.success{
+display:block;
+background:#ecfdf5;
+border:1px solid #bbf7d0;
+color:#15803d;
+}
+
+.error{
+display:block;
+background:#fef2f2;
+border:1px solid #fecaca;
+color:#dc2626;
+}
+
+.hidden{display:none}
+
+.center-screen{
+display:none;
+text-align:center;
+}
+
+.center-screen.active{
+display:block;
+}
+
+.center-screen h2{
+margin-top:22px;
+font-size:32px;
+font-weight:800;
+}
+
+.center-screen p{
+margin-top:12px;
+line-height:1.7;
+color:#64748b;
+}
+
+.spinner{
+width:82px;
+height:82px;
+margin:auto;
+border-radius:22px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 12px 30px rgba(37,99,235,.35);
+}
+
+.spinner svg{
+width:40px;
+height:40px;
+}
+
+.footer{
+margin-top:36px;
+text-align:center;
+font-size:13px;
+color:#94a3b8;
+}
+
+@media(max-width:600px){
+
+body{
+padding:0;
+background:white;
+}
+
+.bg{
+display:none;
+}
+
+.card{
+max-width:none;
+width:100%;
+height:100vh;
+border-radius:0;
+box-shadow:none;
+padding:28px 22px;
+display:flex;
+flex-direction:column;
+}
+
+.logo{
+width:72px;
+height:72px;
+}
+
+h1{
+font-size:34px;
+}
+
+.subtitle{
+font-size:15px;
+}
+
+.otp-wrapper{
+gap:8px;
+}
+
+.otp-box{
+width:46px;
+height:60px;
+font-size:24px;
+border-radius:14px;
+}
+
+.btn{
+margin-top:auto;
+height:56px;
+}
+
+.footer{
+margin-top:24px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg bg1"></div>
+<div class="bg bg2"></div>
+<div class="bg bg3"></div>
+
+<div class="card">
+
+<!-- MAIN -->
+<div id="mainContent">
+
+<div class="logo">
+<svg viewBox="0 0 24 24">
+<path d="M4 7l8 6 8-6"/>
+<rect x="3" y="5" width="18" height="14" rx="2"/>
+</svg>
+</div>
+
+<h1>Email Verification</h1>
+
+<p class="subtitle">
+Securely verify your email address to continue.
+We'll send a one-time verification code.
+</p>
+
+<!-- EMAIL -->
+<div id="emailSection" class="section">
+
+<label>Email Address</label>
+
+<input id="email"
+class="email-input"
+type="email"
+placeholder="you@example.com">
+
+<button id="sendBtn" class="btn">
+Send Verification Code
+</button>
+
+<div id="emailMessage" class="message"></div>
+
+</div>
+
+<!-- OTP -->
+<div id="otpSection" class="section hidden">
+
+<label>Verification Code</label>
+
+<div class="otp-wrapper">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+<input class="otp-box" maxlength="1" inputmode="numeric">
+</div>
+
+<div id="timer" class="timer">
+Expires in 05:00
+</div>
+
+<button id="verifyBtn" class="btn">
+Verify Email
+</button>
+
+<button id="resendBtn" class="resend">
+Resend OTP
+</button>
+
+<div id="otpMessage" class="message"></div>
+
+</div>
+
+<div class="footer">
+Protected verification • Secure connection
+</div>
+
+</div>
+
+<!-- VERIFYING -->
+<div id="verifyingScreen" class="center-screen">
+
+<div class="spinner">
+<svg viewBox="0 0 50 50">
+<circle cx="25" cy="25" r="18"
+stroke="white"
+stroke-width="4"
+fill="none"
+stroke-linecap="round"
+stroke-dasharray="90"
+stroke-dashoffset="60">
+<animateTransform
+attributeName="transform"
+type="rotate"
+from="0 25 25"
+to="360 25 25"
+dur="1s"
+repeatCount="indefinite"/>
+</circle>
+</svg>
+</div>
+
+<h2 style="color:#2563eb;">
+Verifying...
+</h2>
+
+<p>
+Please wait while we verify your email.
+</p>
+
+</div>
+
+<!-- DIFFERENT DEVICE -->
+<div id="deviceMismatch" class="center-screen">
+
+<div class="logo"
+style="background:linear-gradient(135deg,#f59e0b,#ea580c);">
+
+<svg viewBox="0 0 24 24">
+<path d="M12 9v4"/>
+<circle cx="12" cy="17" r="1"/>
+<path d="M10.3 3.9L2.6 18A2 2 0 004.3 21h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>
+</svg>
+
+</div>
+
+<h2 style="color:#ea580c;">
+Different Device Detected
+</h2>
+
+<p>
+This verification link was opened on a different device or different browser than the one used to request the OTP.
+</p>
+
+<p>
+For your security, automatic verification has been blocked.
+</p>
+
+<div id="resendCountdown"
+style="margin-top:24px;font-size:18px;font-weight:700;color:#0f172a;">
+Resend available in 03:00
+</div>
+
+<button
+id="mismatchResend"
+class="btn"
+disabled
+style="margin-top:22px;">
+Resend OTP
+</button>
+
+</div>
+
+<!-- SUCCESS -->
+<div id="successScreen" class="center-screen">
+
+<div class="logo"
+style="background:linear-gradient(135deg,#16a34a,#15803d);">
+
+<svg viewBox="0 0 24 24">
+<path d="M20 6L9 17l-5-5"/>
+</svg>
+
+</div>
+
+<h2 style="color:#15803d;">
+Verified!
+</h2>
+
+<p>
+Your email has been successfully verified.
+</p>
+
+</div>
+
+</div>
+
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyKnV80XFj5GtO1pqc80jn-G02DnDK1OuCFnzHsjdNivSvNQcgoiLlZWZm76EJXJUj8/exec";
+
+// Elements
+const email=document.getElementById("email");
+const sendBtn=document.getElementById("sendBtn");
+const verifyBtn=document.getElementById("verifyBtn");
+const resendBtn=document.getElementById("resendBtn");
+const mismatchResend=document.getElementById("mismatchResend");
+
+const emailSection=document.getElementById("emailSection");
+const otpSection=document.getElementById("otpSection");
+
+const emailMessage=document.getElementById("emailMessage");
+const otpMessage=document.getElementById("otpMessage");
+
+const timer=document.getElementById("timer");
+const resendCountdown=document.getElementById("resendCountdown");
+
+const otpBoxes=document.querySelectorAll(".otp-box");
+
+const mainContent=document.getElementById("mainContent");
+const verifyingScreen=document.getElementById("verifyingScreen");
+const successScreen=document.getElementById("successScreen");
+const deviceMismatch=document.getElementById("deviceMismatch");
+
+let timerInterval;
+let timeLeft=300;
+
+// ---------------- JSONP ----------------
+function jsonp(url,callback){
+
+const script=document.createElement("script");
+const cb="cb_"+Date.now();
+
+window[cb]=data=>{
+delete window[cb];
+script.remove();
+callback(data);
+};
+
+script.src=url+(url.includes("?")?"&":"?")+"callback="+cb;
+
+document.body.appendChild(script);
+
+}
+
+// ---------------- Cookies ----------------
+function setCookie(name,val,maxAge){
+document.cookie=
+`${name}=${encodeURIComponent(val)}; max-age=${maxAge}; path=/`;
+}
+
+function getCookie(name){
+
+const row=document.cookie
+.split("; ")
+.find(c=>c.startsWith(name+"="));
+
+return row?decodeURIComponent(row.split("=")[1]):null;
+
+}
+
+function deleteCookie(name){
+document.cookie=`${name}=; Max-Age=0; path=/`;
+}
+
+// ---------------- Messages ----------------
+function showMessage(el,msg,type){
+el.textContent=msg;
+el.className="message "+type;
+}
+
+// ---------------- OTP Boxes ----------------
+otpBoxes.forEach((box,index)=>{
+
+box.addEventListener("input",()=>{
+
+box.value=box.value.replace(/\D/g,"");
+
+if(box.value&&index<5)
+otpBoxes[index+1].focus();
+
+});
+
+box.addEventListener("keydown",e=>{
+
+if(e.key==="Backspace"&&!box.value&&index>0)
+otpBoxes[index-1].focus();
+
+});
+
+box.addEventListener("paste",e=>{
+
+e.preventDefault();
+
+const txt=e.clipboardData.getData("text")
+.replace(/\D/g,"")
+.slice(0,6);
+
+txt.split("").forEach((d,i)=>{
+if(otpBoxes[i]) otpBoxes[i].value=d;
+});
+
+otpBoxes[Math.min(txt.length,6)-1]?.focus();
+
+});
+
+});
+
+// ---------------- Timer ----------------
+function startTimer(){
+
+clearInterval(timerInterval);
+
+const sent=Number(getCookie("otp_sent_time"));
+
+if(sent){
+
+const elapsed=Math.floor((Date.now()-sent)/1000);
+timeLeft=Math.max(300-elapsed,0);
+
+}else{
+
+timeLeft=300;
+
+}
+
+updateTimer();
+
+timerInterval=setInterval(()=>{
+
+timeLeft--;
+
+updateTimer();
+
+if(timeLeft===120)
+resendBtn.style.display="block";
+
+if(timeLeft<=0){
+
+clearInterval(timerInterval);
+
+timer.textContent="Code expired";
+resendBtn.style.display="block";
+
+}
+
+},1000);
+
+if(timeLeft<=120)
+resendBtn.style.display="block";
+
+}
+
+function updateTimer(){
+
+const m=Math.floor(timeLeft/60);
+const s=timeLeft%60;
+
+timer.textContent=
+`Expires in ${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+}
+
+// ---------------- Different Device Countdown ----------------
+function startMismatchCountdown(){
+
+const sent=Number(getCookie("otp_sent_time"))||Date.now();
+
+let remain=Math.max(180-Math.floor((Date.now()-sent)/1000),0);
+
+update();
+
+const i=setInterval(()=>{
+
+remain--;
+
+update();
+
+if(remain<=0){
+
+clearInterval(i);
+
+mismatchResend.disabled=false;
+
+resendCountdown.textContent="You can request a new OTP.";
+
+}
+
+},1000);
+
+function update(){
+
+const m=Math.floor(remain/60);
+const s=remain%60;
+
+resendCountdown.textContent=
+`Resend available in ${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+}
+
+}
+
+// ---------------- Send OTP ----------------
+sendBtn.onclick=()=>{
+
+const mail=email.value.trim();
+
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
+
+showMessage(emailMessage,"Please enter a valid email.","error");
+return;
+
+}
+
+sendBtn.disabled=true;
+sendBtn.textContent="Sending...";
+
+jsonp(
+`${SCRIPT_URL}?action=sendOTP&email=${encodeURIComponent(mail)}`,
+res=>{
+
+sendBtn.disabled=false;
+sendBtn.textContent="Send Verification Code";
+
+if(res.success){
+
+showMessage(emailMessage,res.message,"success");
+
+setCookie("otp_sent","1",300);
+setCookie("verify_email",mail,300);
+setCookie("otp_sent_time",Date.now(),300);
+
+emailSection.classList.add("hidden");
+otpSection.classList.remove("hidden");
+
+otpBoxes.forEach(b=>b.value="");
+
+otpBoxes[0].focus();
+
+startTimer();
+
+}else{
+
+showMessage(emailMessage,res.message,"error");
+
+}
+
+}
+);
+
+};
+
+// ---------------- Manual Verify ----------------
+verifyBtn.onclick=()=>{
+
+const otp=[...otpBoxes].map(b=>b.value).join("");
+
+const mail=getCookie("verify_email")||email.value.trim();
+
+if(otp.length!==6){
+
+showMessage(otpMessage,"Enter the full 6-digit OTP.","error");
+return;
+
+}
+
+verifyBtn.disabled=true;
+verifyBtn.textContent="Verifying...";
+
+jsonp(
+`${SCRIPT_URL}?action=verifyOTP&email=${encodeURIComponent(mail)}&otp=${otp}`,
+res=>{
+
+verifyBtn.disabled=false;
+verifyBtn.textContent="Verify Email";
+
+if(res.success){
+
+deleteCookie("otp_sent");
+deleteCookie("verify_email");
+deleteCookie("otp_sent_time");
+
+mainContent.style.display="none";
+successScreen.classList.add("active");
+
+}else{
+
+showMessage(otpMessage,res.message,"error");
+
+}
+
+}
+);
+
+};
+
+// ---------------- Resend ----------------
+function resend(mail){
+
+jsonp(
+`${SCRIPT_URL}?action=sendOTP&email=${encodeURIComponent(mail)}`,
+res=>{
+
+if(res.success){
+
+setCookie("otp_sent","1",300);
+setCookie("verify_email",mail,300);
+setCookie("otp_sent_time",Date.now(),300);
+
+otpBoxes.forEach(b=>b.value="");
+
+deviceMismatch.classList.remove("active");
+mainContent.style.display="block";
+
+emailSection.classList.add("hidden");
+otpSection.classList.remove("hidden");
+
+startTimer();
+
+showMessage(otpMessage,"New OTP sent.","success");
+
+}
+
+}
+);
+
+}
+
+resendBtn.onclick=()=>{
+
+const mail=getCookie("verify_email");
+
+if(mail) resend(mail);
+
+};
+
+mismatchResend.onclick=()=>{
+
+const mail=getCookie("verify_email");
+
+if(mail){
+mismatchResend.disabled=true;
+resend(mail);
+}
+
+};
+
+// ---------------- Auto Verify ----------------
+window.addEventListener("load",()=>{
+
+const token=new URLSearchParams(location.search).get("token");
+
+if(token){
+
+mainContent.style.display="none";
+verifyingScreen.classList.add("active");
+
+// Frontend cookie check
+
+if(!getCookie("otp_sent")){
+
+verifyingScreen.classList.remove("active");
+deviceMismatch.classList.add("active");
+
+startMismatchCountdown();
+
+history.replaceState({},document.title,location.pathname);
+
+return;
+
+}
+
+// Cookie exists → send token
+
+jsonp(
+`${SCRIPT_URL}?action=verifyToken&token=${encodeURIComponent(token)}`,
+res=>{
+
+verifyingScreen.classList.remove("active");
+
+if(res.success){
+
+deleteCookie("otp_sent");
+deleteCookie("verify_email");
+deleteCookie("otp_sent_time");
+
+successScreen.classList.add("active");
+
+}else{
+
+mainContent.style.display="block";
+
+emailSection.classList.add("hidden");
+otpSection.classList.remove("hidden");
+
+showMessage(otpMessage,res.message,"error");
+
+}
+
+history.replaceState({},document.title,location.pathname);
+
+}
+);
+
+return;
+
+}
+
+// Normal reload
+
+if(getCookie("otp_sent")){
+
+emailSection.classList.add("hidden");
+otpSection.classList.remove("hidden");
+
+startTimer();
+
+}
+
+});
+</script>
+
+</body>
+</html>
